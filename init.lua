@@ -83,6 +83,8 @@ escaped_replace("mods/material_randomizer/files/randomizer.lua", "if not table.c
       if not table.contains(exclude_materials, element._attr.name) and not tags.dont_kill_this then
         local material_type = material_get_type(inherited_element)]])
 
+escaped_replace("mods/Hydroxide/files/chemical_curiosities/materials/uranium/radiation_decrease.lua", [[print("ATTEMPTING TO REMOVE " .. leggyentity)]], "")
+
 local DEBUG = false
 
 function OnPlayerSpawned()
