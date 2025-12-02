@@ -1,0 +1,17 @@
+dofile_once("data/scripts/lib/mod_settings.lua")
+
+local function PatchShit()
+	--escaped_replace("mods/biome-plus/init.lua", [[	local key = "MOD_INJECTED_BIOMES"
+	--	local is_initialized = GlobalsGetValue( key ) 
+	--	if( is_initialized == "yes" ) then
+	--		return
+	--	end
+	--	GlobalsSetValue( key, "yes" )]], "") -- deranged
+	ModLuaFileAppend("mods/biome-plus/init.lua", "mods/evaisa.compatibility_fixes/files/block_pre_init_globals.lua")
+end
+
+function ModSettingsUpdate(init_scope)
+	if init_scope == 0 or init_scope == 1 then
+		PatchShit()
+	end
+end
