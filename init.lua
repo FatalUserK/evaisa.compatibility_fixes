@@ -272,6 +272,49 @@ end
 stop_using_globals_too_early("data/scripts/empty_enemy_helper_start.lua")
 stop_using_globals_too_early("mods/biome-plus/init.lua")
 
+if ModIsEnabled("copis_things") and ModIsEnabled("config_lib") then
+	local path = "mods/copis_things/files/scripts/gui/compat_crap.lua"
+	if ModDoesFileExist(path) then
+		ModTextFileSetContent(path, [[local current_button_reservation = tonumber( GlobalsGetValue( "mod_button_tr_current", "0" ) ) or 0
+GlobalsSetValue( "mod_button_tr_current", tostring( current_button_reservation + 15 ) )
+return current_button_reservation]])
+	end
+	
+	path = "mods/copis_things/files/scripts/gui/button.lua"
+	if ModDoesFileExist(path) then
+		local content = ModTextFileGetContent(path)
+		content = string.gsub(content, "local function button%(Gui, id_fn%)", [[local function button(Gui, id_fn, button_offset)
+    button_offset = button_offset or 0]])
+		content = string.gsub(content, "screen_w %- 14, 2", "screen_w - 14 - button_offset, 2")
+		ModTextFileSetContent(path, content)
+	end
+	
+	path = "mods/copis_things/files/scripts/gui/gui.lua"
+	if ModDoesFileExist(path) then
+		local content = ModTextFileGetContent(path)
+		content = string.gsub(content, 'button%.lua"%)%(self%.obj, new_id%)', 'button.lua")(self.obj, new_id, curr_res)')
+		ModTextFileSetContent(path, content)
+	end
+	
+	path = "mods/config_lib/files/gui.lua"
+	if ModDoesFileExist(path) then
+		local content = ModTextFileGetContent(path)
+		content = string.gsub(content, 'local mod_button_reservation = tonumber%( GlobalsGetValue%( "config_lib_mod_button_reservation", "0" %) %);', "local mod_button_reservation = 9999;")
+		ModTextFileSetContent(path, content)
+	end
+end
+
+if ModIsEnabled("gkbrkn_noita") and ModIsEnabled("config_lib") then
+	local path = "mods/gkbrkn_noita/files/gkbrkn/gui/update.lua"
+	if ModDoesFileExist(path) then
+		local content = ModTextFileGetContent(path)
+		content = string.gsub(content, 'local button_x, button_y = setting_get%( "main_button_x", screen_width %), setting_get%( "main_button_y", 0 %)', [[local _gkbrkn_reservation = tonumber( GlobalsGetValue( "mod_button_tr_current", "0" ) ) or 0
+	GlobalsSetValue( "mod_button_tr_current", tostring( _gkbrkn_reservation + 15 ) )
+	local button_x, button_y = setting_get( "main_button_x", screen_width - _gkbrkn_reservation ), setting_get( "main_button_y", 0 )]])
+		ModTextFileSetContent(path, content)
+	end
+end
+
 local DEBUG = true
 
 function OnMagicNumbersAndWorldSeedInitialized()
